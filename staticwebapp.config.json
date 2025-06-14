@@ -1,31 +1,19 @@
 {
+  "routes": [
+    {
+      "route": "/api/*",
+      "methods": ["GET","POST","PUT","DELETE","OPTIONS","HEAD","PATCH"],
+      "rewrite": "https://emsapp-euffdyd3dwhgdzav.polandcentral-01.azurestaticapps.net/api/{*restOfPath}"
+    }
+  ],
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": [
       "/api/*",
       "/*.js",
       "/*.css",
-      "/*.png",
-      "/*.svg",
-      "/*.jpg",
-      "/*.json",
       "/assets/*",
-      "/favicon.ico"
+      "/*.{png,jpg,gif,svg,ico}"
     ]
-  },
-  "routes": [
-    {
-      "route": "/api/*",
-      "methods": [
-        "GET",
-        "HEAD",
-        "POST",
-        "PUT",
-        "DELETE",
-        "PATCH",
-        "OPTIONS"
-      ],
-      "rewrite": "https://emsapp-euffdyd3dwhgdzav.polandcentral-01.azurewebsites.net/api/{*}"
-    }
-  ]
+  }
 }
