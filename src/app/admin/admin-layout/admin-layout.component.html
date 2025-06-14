@@ -1,0 +1,25 @@
+<!-- src/app/admin/admin-layout.component.html -->
+
+<div class="container-fluid">
+  <div class="row min-vh-100">
+    <!-- Sidebar -->
+    <nav class="col-md-2 bg-light sidebar py-3">
+      <h3 class="text-center mb-4">Admin Panel</h3>
+      <div class="nav flex-column nav-pills">
+        <a class="nav-link" routerLink="employees"   routerLinkActive="active">Employees</a>
+        <a class="nav-link" routerLink="managers"    routerLinkActive="active">Managers</a>
+        <a class="nav-link" routerLink="departments" routerLinkActive="active">Departments</a>
+        <a class="nav-link" routerLink="schedules"   routerLinkActive="active">Schedules</a>
+        <a class="nav-link" routerLink="punches"     routerLinkActive="active">Punch Records</a>
+        <a class="nav-link" routerLink="leaves"      routerLinkActive="active">Leave Requests</a>
+        <a class="nav-link" routerLink="tasks"       routerLinkActive="active">Tasks</a>
+        <a class="nav-link" routerLink="policies"    routerLinkActive="active">Policies</a>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="col-md-10 ms-sm-auto px-4 py-4">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

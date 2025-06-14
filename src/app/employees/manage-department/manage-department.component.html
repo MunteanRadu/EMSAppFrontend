@@ -1,0 +1,83 @@
+<div class="container my-4">
+  <h2 class="mb-4">Manage Department</h2>
+
+  <!-- Error -->
+  <div *ngIf="error" class="alert alert-danger text-center">
+    {{ error }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="alert alert-info text-center">
+    Loading…
+  </div>
+
+  <!-- Assigned Employees -->
+  <div class="card p-4 mb-4">
+    <h3 class="mb-3">Assigned to My Department</h3>
+
+    <table class="table table-striped table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of assigned">
+          <td>{{ u.username }}</td>
+          <td>{{ u.email }}</td>
+          <td>
+            <div class="btn-group btn-group-sm" role="group">
+              <ng-container *ngIf="deleteId === u.id && !editId; else removeBtn">
+                <button (click)="confirmRemove(u)" class="btn btn-danger">Confirm</button>
+                <button (click)="cancel()" class="btn btn-secondary">Cancel</button>
+              </ng-container>
+              <ng-template #removeBtn>
+                <button (click)="startRemove(u)" class="btn btn-outline-danger">Remove</button>
+              </ng-template>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="assigned.length === 0">
+          <td colspan="3" class="text-center text-muted">No assigned employees.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Unassigned Employees -->
+  <div class="card p-4">
+    <h3 class="mb-3">Unassigned Employees</h3>
+
+    <table class="table table-striped table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of unassigned">
+          <td>{{ u.username }}</td>
+          <td>{{ u.email }}</td>
+          <td>
+            <div class="btn-group btn-group-sm" role="group">
+              <ng-container *ngIf="editId === u.id && !deleteId; else assignBtn">
+                <button (click)="confirmAssign(u)" class="btn btn-success">Confirm</button>
+                <button (click)="cancel()" class="btn btn-secondary">Cancel</button>
+              </ng-container>
+              <ng-template #assignBtn>
+                <button (click)="startAssign(u)" class="btn btn-outline-success">Assign</button>
+              </ng-template>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="unassigned.length === 0">
+          <td colspan="3" class="text-center text-muted">No unassigned employees.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

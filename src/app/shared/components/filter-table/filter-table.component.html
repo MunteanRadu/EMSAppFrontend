@@ -1,0 +1,33 @@
+<table class="table table-striped table-hover">
+  <thead class="table-dark">
+    <tr>
+      <th *ngFor="let col of columns">
+        <div>{{ col.header }}</div>
+        <div *ngIf="col.type">
+          <input
+            [type]="col.type"
+            [(ngModel)]="filterValues[col.field]"
+            placeholder="Search…"
+            class="form-control form-control-sm mt-1"
+          />
+        </div>
+      </th>
+
+      <!-- any extra header cell (e.g. "Actions") -->
+      <ng-container *ngIf="headerCellTpl">
+        <th>
+          <ng-template [ngTemplateOutlet]="headerCellTpl"></ng-template>
+        </th>
+      </ng-container>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngFor="let row of filteredData">
+      <!-- user-provided row template gets rendered for each row -->
+      <ng-template
+        [ngTemplateOutlet]="rowTpl"
+        [ngTemplateOutletContext]="{ $implicit: row }"
+      ></ng-template>
+    </ng-container>
+  </tbody>
+</table>

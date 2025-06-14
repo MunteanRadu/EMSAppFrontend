@@ -1,0 +1,23 @@
+.global-nav {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 0.5rem 1rem;
+
+  a {
+    margin-right: 1rem;
+    text-decoration: none;
+  }
+  .active {
+    font-weight: bold;
+  }
+  .spacer {
+    flex: 1;
+  }
+  .welcome {
+    margin-right: 1rem;
+  }
+  button {
+    cursor: pointer;
+  }
+}

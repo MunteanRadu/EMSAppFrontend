@@ -1,0 +1,107 @@
+<h2 class="mb-4">Leave Requests</h2>
+
+<div *ngIf="error" class="alert alert-danger text-center">{{ error }}</div>
+<div *ngIf="loading" class="alert alert-info text-center">Loading…</div>
+
+<app-filter-panel 
+  *ngIf="!loading"
+  [config]="leaveFilterConfig"
+  (filterChange)="onFilterChange($event)">
+</app-filter-panel>
+
+<!-- Leave Requests Table -->
+<table *ngIf="!loading" class="table table-striped table-hover">
+  <thead class="table-dark">
+    <tr>
+      <th>User</th>
+      <th>Type</th>
+      <th>From</th>
+      <th>To</th>
+      <th>Reason</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let r of filtered">
+      <!-- User -->
+      <td>{{ userMap[r.userId] }}</td>
+
+      <!-- Type -->
+      <td *ngIf="!editMap[r.id]">{{ r.type }}</td>
+      <td *ngIf="editMap[r.id]">
+        <select [(ngModel)]="editMap[r.id].type" class="form-select form-select-sm">
+          <option value="annual">Annual Leave</option>
+          <option value="Compassionate">Compassionate</option>
+          <option value="parental">Parental Leave</option>
+          <option value="paid">Paid Leave</option>
+          <option value="unpaid">Unpaid Leave</option>
+          <option value="sick">Sick Leave</option>
+          <option value="toil">TOIL Leave</option>
+          <option value="academic">Academic Leave</option>
+          <option value="misc">Misc Leave</option>
+        </select>
+      </td>
+
+      <!-- From -->
+      <td *ngIf="!editMap[r.id]">{{ r.startDate }}</td>
+      <td *ngIf="editMap[r.id]">
+        <input type="date" [(ngModel)]="editMap[r.id].startDate" class="form-control form-control-sm" />
+      </td>
+
+      <!-- To -->
+      <td *ngIf="!editMap[r.id]">{{ r.endDate }}</td>
+      <td *ngIf="editMap[r.id]">
+        <input type="date" [(ngModel)]="editMap[r.id].endDate" class="form-control form-control-sm" />
+      </td>
+
+      <!-- Reason -->
+      <td *ngIf="!editMap[r.id]">{{ r.reason }}</td>
+      <td *ngIf="editMap[r.id]">
+        <input type="text" [(ngModel)]="editMap[r.id].reason" class="form-control form-control-sm" />
+      </td>
+
+      <!-- Status -->
+      <td>
+        <span
+          class="badge"
+          [ngClass]="{
+            'bg-secondary': r.status === 'pending',
+            'bg-success': r.status === 'approved',
+            'bg-danger': r.status === 'rejected',
+            'bg-info': r.status === 'completed'
+          }"
+        >
+          {{ r.status }}
+        </span>
+      </td>
+
+      <!-- Actions -->
+      <td>
+        <div class="btn-group btn-group-sm" role="group">
+          <!-- If editing -->
+          <ng-container *ngIf="editId === r.id; else notEditing">
+            <button (click)="saveEdit(r)" class="btn btn-success">Save</button>
+            <button (click)="cancelEdit()" class="btn btn-secondary">Cancel</button>
+          </ng-container>
+
+          <ng-template #notEditing>
+            <ng-container *ngIf="deleteId === r.id; else normalBtns">
+              <button (click)="confirmDelete(r)" class="btn btn-danger">Confirm</button>
+              <button (click)="cancelDelete()" class="btn btn-secondary">Cancel</button>
+            </ng-container>
+
+            <ng-template #normalBtns>
+              <button (click)="startEdit(r)" class="btn btn-primary">Edit</button>
+              <button (click)="startDelete(r)" class="btn btn-danger">Delete</button>
+            </ng-template>
+          </ng-template>
+        </div>
+      </td>
+    </tr>
+
+    <tr *ngIf="filtered.length === 0">
+      <td colspan="7" class="text-center text-muted">No leave requests found.</td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,23 @@
+/* src/app/admin/admin-layout.component.scss */
+.admin-shell {
+  display: flex;
+  height: 100%;
+}
+.sidebar {
+  width: 200px;
+  background: #f0f0f0;
+  padding: 1rem;
+}
+.sidebar a {
+  display: block;
+  margin: 0.5rem 0;
+  text-decoration: none;
+}
+.sidebar a.active {
+  font-weight: bold;
+}
+.content {
+  flex: 1;
+  padding: 1rem;
+  overflow: auto;
+}

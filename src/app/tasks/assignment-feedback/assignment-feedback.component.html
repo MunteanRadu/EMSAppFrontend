@@ -1,0 +1,41 @@
+<!-- src/app/shared/components/assignment-feedback.component.html -->
+
+<div class="feedback-section">
+  <h3>Feedback</h3>
+
+  <div *ngFor="let fb of feedbackList" class="feedback-entry">
+    <!-- EDIT MODE -->
+    <div *ngIf="editingFeedbackId === fb.id; else viewMode">
+      <textarea [(ngModel)]="editedText"></textarea>
+      <button (click)="saveEditFeedback(fb)">Save</button>
+      <button (click)="cancelEditFeedback()">Cancel</button>
+    </div>
+
+    <!-- VIEW MODE -->
+    <ng-template #viewMode>
+      <div>
+        <strong>{{ userMap[fb.userId] || 'Unknown' }} ({{ fb.type }}):</strong> {{ fb.text }}
+        <small class="text-muted">({{ fb.timeStamp | date: 'short' }})</small>
+      </div>
+
+      <div *ngIf="canEdit(fb)" class="feedback-actions">
+        <button (click)="startEditFeedback(fb)">Edit</button>
+          <!-- DELETE CONFIRM MODE -->
+        <ng-container *ngIf="deletingFeedbackId === fb.id; else deleteButton">
+          <button (click)="confirmDeleteFeedback(fb)" class="danger">Confirm</button>
+          <button (click)="cancelDeleteFeedback()">Cancel</button>
+        </ng-container>
+
+        <!-- DELETE BUTTON -->
+        <ng-template #deleteButton>
+          <button (click)="startDeleteFeedback(fb)">Delete</button>
+        </ng-template>
+      </div>
+    </ng-template>
+  </div>
+
+  <div class="new-feedback-form">
+    <textarea [(ngModel)]="newFeedbackText" placeholder="Add feedback..."></textarea>
+    <button (click)="addFeedback()">Submit</button>
+  </div>
+</div>

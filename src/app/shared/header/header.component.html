@@ -1,0 +1,68 @@
+<!-- Global Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/">EMS App</a>
+
+    <!-- Mobile toggle button -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#globalNav"
+      aria-controls="globalNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar links -->
+    <div class="collapse navbar-collapse" id="globalNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <!-- Employee / Manager -->
+        <ng-container *ngIf="isEmployee || isManager">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/profile" routerLinkActive="active">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/punches" routerLinkActive="active">Punches</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/schedules" routerLinkActive="active">Schedule</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/leaves" routerLinkActive="active">Leaves</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/tasks" routerLinkActive="active">Tasks</a>
+          </li>
+        </ng-container>
+
+        <!-- Manager / Admin -->
+        <ng-container *ngIf="isManager">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/employees" routerLinkActive="active">Manage Employees</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/department/manage" routerLinkActive="active">Manage Department</a>
+          </li>
+        </ng-container>
+
+        <!-- Admin -->
+        <ng-container *ngIf="isAdmin">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/admin" routerLinkActive="active">Admin Panel</a>
+          </li>
+        </ng-container>
+      </ul>
+
+      <!-- Logout button -->
+      <button (click)="logout()" class="btn btn-outline-light">
+        Logout
+      </button>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,139 @@
+<div class="container my-4">
+  <!-- Punch / Break Controls -->
+  <div class="mb-3 d-flex flex-wrap gap-2">
+    <button
+      (click)="onPunch()"
+      [disabled]="
+        nextAction==='In'
+          ? hasActiveLeave
+          : !canPunchOut
+      "
+      class="btn btn-primary"
+    >
+      {{ nextAction==='In' ? 'Punch In' : 'Punch Out' }}
+    </button>
+    <button
+      *ngIf="nextAction==='Out'"
+      (click)="onStartBreak()"
+      [disabled]="!canStartBreak"
+      class="btn btn-warning"
+    >
+      Start Break
+    </button>
+    <button
+      *ngIf="nextAction==='Out'"
+      (click)="onEndBreak()"
+      [disabled]="!canEndBreak"
+      class="btn btn-success"
+    >
+      End Break
+    </button>
+  </div>
+  
+  <div *ngIf="nextAction==='In' && hasActiveLeave" class="alert alert-info">
+      You’re on approved leave today, so you can’t punch in.
+    </div>
+
+    <div *ngIf="nextAction==='Out' && !canPunchOut" class="alert alert-warning">
+      Finish your break before punching out.
+    </div>
+  <div *ngIf="punchError" class="mt-2 text-danger">{{ punchError }}</div>
+
+  <!-- Welcome Header -->
+  <header class="mb-4">
+    <h1 class="display-5">Welcome, {{ username }}</h1>
+  </header>
+
+  <!-- Grid of Cards -->
+  <div class="row g-4">
+    <!-- Today's Punches -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="card-title">Today's Punches</h2>
+          <ul class="list-group list-group-flush">
+            <li
+              *ngFor="let p of todaysPunches"
+              class="list-group-item"
+            >
+              {{ p.timeIn }}
+              <span *ngIf="p.timeOut">
+                – {{ p.timeOut }} ({{ p.totalHours }})
+              </span>
+              <ul *ngIf="todayBreaks[p.id]?.length" class="mt-2 ps-3">
+                <li
+                  *ngFor="let b of todayBreaks[p.id]"
+                  class="small"
+                >
+                  Break: {{ b.startTime }}
+                  <span *ngIf="b.endTime">
+                    – {{ b.endTime }} ({{ b.duration }})
+                  </span>
+                </li>
+              </ul>
+            </li>
+            <li *ngIf="todaysPunches.length===0" class="list-group-item text-muted">
+              No punches today.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hours Worked -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 text-center">
+        <div class="card-body d-flex flex-column justify-content-center">
+          <h2 class="card-title">Hours Worked</h2>
+          <p class="display-6">{{ totalHoursToday }} hrs</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming Shifts -->
+    <div class="col-md-6 col-lg-4" *ngIf="!isManager">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="card-title">Upcoming Shifts</h2>
+          <ul class="list-group list-group-flush">
+            <li *ngFor="let s of upcomingShifts" class="list-group-item">
+              <strong>{{ s.day }}</strong>: {{ s.startTime }} – {{ s.endTime }}
+            </li>
+            <li *ngIf="!upcomingShifts.length" class="list-group-item text-muted">
+              No more shifts this week.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Tasks -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="card-title">Pending Tasks</h2>
+          <ul class="list-group list-group-flush">
+            <li
+              *ngFor="let t of ongoingTasks"
+              class="list-group-item d-flex justify-content-between align-items-center"
+              [ngClass]="{ 'text-danger': t.isOverdue }"
+            >
+              <div>
+                {{ t.title }}
+                <small class="text-muted">
+                  (due {{ t.dueDate | date:'shortDate' }})
+                </small>
+              </div>
+              <span *ngIf="t.isOverdue" class="badge bg-danger rounded-pill">
+                Overdue
+              </span>
+            </li>
+            <li *ngIf="ongoingTasks.length===0" class="list-group-item text-muted">
+              No pending tasks.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

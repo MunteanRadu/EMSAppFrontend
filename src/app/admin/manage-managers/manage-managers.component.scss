@@ -1,0 +1,7 @@
+/* src/app/admin/manage-managers.component.scss */
+.two-col { display: flex; gap: 2rem; }
+section { flex: 1; }
+
+.grid { width: 100%; border-collapse: collapse; }
+.grid th, .grid td { padding: .5rem; border: 1px solid #ddd; }
+.error { color: red; font-size: .9em; }

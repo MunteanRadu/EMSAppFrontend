@@ -1,0 +1,13 @@
+/* punches.component.scss */
+.month-nav {
+  display: flex; align-items: center; justify-content: center;
+  button { margin: 0 1rem; }
+}
+.calendar-grid {
+  display: grid; grid-template-columns: repeat(7,1fr); gap: 0.25rem;
+}
+.day-cell {
+  padding: 0.5rem; border: 1px solid #ccc; text-align:center; cursor:pointer;
+}
+.day-cell.has-punch { background:#c8e6c9; }
+.day-cell.selected  { background:#81c784; color:white; }

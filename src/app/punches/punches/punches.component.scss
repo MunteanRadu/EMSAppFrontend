@@ -1,0 +1,43 @@
+/* Full calendar grid → 7 columns */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+/* Calendar cells */
+.calendar-cell {
+  border: 1px solid #dee2e6;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  min-height: 80px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  font-weight: 500;
+}
+
+/* Header row */
+.calendar-header {
+  margin-bottom: 0.5rem;
+}
+
+.calendar-header-cell {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #6c757d;
+  cursor: default;
+}
+
+/* Blank cells */
+.calendar-blank {
+  background-color: #f8f9fa;
+  cursor: default;
+}
+
+/* Day cells */
+.calendar-day:hover {
+  background-color: #e9ecef;
+  transition: background-color 0.2s ease-in-out;
+}

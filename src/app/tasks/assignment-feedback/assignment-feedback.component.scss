@@ -1,0 +1,30 @@
+/* src/app/shared/components/assignment-feedback.component.scss */
+
+.feedback-section {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.feedback-entry {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+.feedback-actions button {
+  margin-right: 0.5rem;
+}
+
+.new-feedback-form {
+  margin-top: 1rem;
+}
+
+.new-feedback-form textarea {
+  width: 100%;
+  height: 80px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}

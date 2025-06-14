@@ -1,0 +1,101 @@
+<div class="container my-4" style="max-width: 600px;">
+  <h2 class="mb-4">My Profile</h2>
+
+  <!-- Error -->
+  <div *ngIf="error" class="alert alert-danger text-center">
+    {{ error }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="alert alert-info text-center">
+    Loading…
+  </div>
+
+  <!-- Profile Form -->
+  <div *ngIf="!loading">
+    <form *ngIf="editing || profile" (ngSubmit)="save()">
+      <!-- Full Name -->
+      <div class="mb-3">
+        <label for="fullName" class="form-label">Full Name</label>
+        <input
+          id="fullName"
+          type="text"
+          [(ngModel)]="editedProfile.name"
+          name="fullName"
+          class="form-control"
+          [readonly]="!editing"
+        />
+      </div>
+
+      <!-- Age -->
+      <div class="mb-3">
+        <label for="age" class="form-label">Age</label>
+        <input
+          id="age"
+          type="number"
+          [(ngModel)]="editedProfile.age"
+          name="age"
+          class="form-control"
+          [readonly]="!editing"
+        />
+      </div>
+
+      <!-- Phone -->
+      <div class="mb-3">
+        <label for="phone" class="form-label">Phone</label>
+        <input
+          id="phone"
+          type="text"
+          [(ngModel)]="editedProfile.phone"
+          name="phone"
+          class="form-control"
+          [readonly]="!editing"
+        />
+      </div>
+
+      <!-- Address -->
+      <div class="mb-3">
+        <label for="address" class="form-label">Address</label>
+        <input
+          id="address"
+          type="text"
+          [(ngModel)]="editedProfile.address"
+          name="address"
+          class="form-control"
+          [readonly]="!editing"
+        />
+      </div>
+
+      <!-- Emergency Contact -->
+      <div class="mb-3">
+        <label for="emergencyContact" class="form-label">Emergency Contact</label>
+        <input
+          id="emergencyContact"
+          type="text"
+          [(ngModel)]="editedProfile.emergencyContact"
+          name="emergencyContact"
+          class="form-control"
+          [readonly]="!editing"
+        />
+      </div>
+
+      <!-- Actions -->
+      <div class="d-flex justify-content-end gap-2">
+        <ng-container *ngIf="editing; else editBtn">
+          <button type="submit" class="btn btn-success">
+            Save
+          </button>
+          <button type="button" (click)="cancelEdit()" class="btn btn-secondary">
+            Cancel
+          </button>
+        </ng-container>
+
+        <ng-template #editBtn>
+          <button type="button" (click)="startEdit()" class="btn btn-primary">
+            Edit
+          </button>
+        </ng-template>
+      </div>
+    </form>
+  </div>
+</div>

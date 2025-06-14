@@ -1,0 +1,201 @@
+<div *ngIf="loading" class="alert alert-info text-center my-3">
+  Loading tasks…
+</div>
+
+<ng-container *ngIf="!loading">
+  <!-- Manager View with Tabs -->
+  <div *ngIf="isManager; else employeeView" class="container mt-4">
+    <h2 class="mb-4">Department Tasks</h2>
+
+    <!-- Create Form -->
+    <section class="card p-4 mb-4">
+      <h3>Create New Assignment</h3>
+      <form class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Title</label>
+          <input [(ngModel)]="newTitle" name="title" class="form-control" />
+        </div>
+        <div class="col-12">
+          <label class="form-label">Description</label>
+          <textarea [(ngModel)]="newDescription" name="description" class="form-control"></textarea>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Due Date</label>
+          <input
+            type="date"
+            [(ngModel)]="newDueDate"
+            name="dueDate"
+            [min]="todayString"
+            class="form-control"
+          />
+        </div>
+        <div class="col-12">
+          <button
+            (click)="create()"
+            [disabled]="!newTitle || !newDueDate"
+            class="btn btn-primary mt-3"
+          >
+            Create
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <mat-tab-group>
+      <mat-tab *ngFor="let g of managerGroups" [label]="g.label + ' (' + g.items.length + ')'">
+        <table class="table table-striped table-hover align-middle mt-3">
+          <thead class="table-dark">
+            <tr>
+              <th>Title</th>
+              <th>Due</th>
+              <th>Assigned To</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let t of g.items"
+                [ngClass]="g.key==='InProgress' && isOverdue(t) ? 'text-danger' : statusClass(t.status)">
+              <td>{{ t.title }}</td>
+              <td>
+                {{ t.dueDate | date:'shortDate' }}
+                <span *ngIf="g.key==='InProgress' && isOverdue(t)" class="badge bg-danger ms-2">
+                  Overdue
+                </span>
+              </td>
+              <td>{{ t.assignedToId ? userMap[t.assignedToId] : '-' }}</td>
+              <td> 
+                <div class="btn-group btn-group-sm">
+                  <button *ngIf="g.key==='Done'" (click)="approve(t)" class="btn btn-success">Approve</button>
+                  <button *ngIf="g.key==='Done'" (click)="reject(t)"  class="btn btn-danger">Reject</button>
+                  <button (click)="viewTask(t)" class="btn btn-outline-secondary">View</button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="g.items.length===0">
+              <td colspan="4" class="text-center text-muted">None.</td>
+            </tr>
+          </tbody>
+        </table>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+  <!-- Employee View with Tabs -->
+  <ng-template #employeeView>
+    <div class="container mt-4">
+      <h2 class="mb-4">Your Tasks</h2>
+      <mat-tab-group>
+        <!-- Dept Pending -->
+        <mat-tab label="Pending ({{ deptPending.length }})">
+          <table class="table table-striped table-hover align-middle mt-3">
+            <thead class="table-dark">
+              <tr>
+                <th>Title</th>
+                <th>Due</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of deptPending" [ngClass]="statusClass(t.status)">
+                <td>{{ t.title }}</td>
+                <td>{{ t.dueDate | date:'shortDate' }}</td>
+                <td>
+                  <div class="btn-group btn-group-sm">
+                    <button (click)="start(t)" class="btn btn-primary">Start</button>
+                    <button (click)="viewTask(t)" class="btn btn-outline-secondary">View</button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="deptPending.length===0">
+                <td colspan="3" class="text-center text-muted">None.</td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-tab>
+
+        <!-- Ongoing -->
+        <mat-tab label="Ongoing ({{ myOngoing.length }})">
+          <table class="table table-striped table-hover align-middle mt-3">
+            <thead class="table-dark">
+              <tr>
+                <th>Title</th>
+                <th>Due</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of myOngoing" [ngClass]="{ 'text-danger': isOverdue(t) }">
+                <td>{{ t.title }}</td>
+                <td>
+                  {{ t.dueDate | date:'shortDate' }}
+                  <span *ngIf="isOverdue(t)" class="badge bg-danger ms-2">Overdue</span>
+                </td>
+                <td>
+                  <div class="btn-group btn-group-sm">
+                    <button (click)="complete(t)" class="btn btn-success">Complete</button>
+                    <button (click)="viewTask(t)" class="btn btn-outline-secondary">View</button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="myOngoing.length===0">
+                <td colspan="3" class="text-center text-muted">None.</td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-tab>
+
+        <!-- Completed / Reviewed -->
+        <mat-tab label="Completed & Reviewed ({{ myCompleted.length }})">
+          <table class="table table-striped table-hover align-middle mt-3">
+            <thead class="table-dark">
+              <tr>
+                <th>Title</th>
+                <th>Due</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of myCompleted" [ngClass]="statusClass(t.status)">
+                <td>{{ t.title }}</td>
+                <td>{{ t.dueDate | date:'shortDate' }}</td>
+                <td>{{ t.status }}</td>
+                <td>
+                  <button (click)="viewTask(t)" class="btn btn-outline-secondary btn-sm">View</button>
+                </td>
+              </tr>
+              <tr *ngIf="myCompleted.length===0">
+                <td colspan="4" class="text-center text-muted">None.</td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-tab>
+
+        <!-- Rejected -->
+        <mat-tab label="Rejected ({{ myRejected.length }})">
+          <table class="table table-striped table-hover align-middle mt-3">
+            <thead class="table-dark">
+              <tr>
+                <th>Title</th>
+                <th>Due</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of myRejected" [ngClass]="statusClass(t.status)">
+                <td>{{ t.title }}</td>
+                <td>{{ t.dueDate | date:'shortDate' }}</td>
+                <td>
+                  <button (click)="viewTask(t)" class="btn btn-outline-danger btn-sm">View</button>
+                </td>
+              </tr>
+              <tr *ngIf="myRejected.length===0">
+                <td colspan="3" class="text-center text-muted">None.</td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </ng-template>
+</ng-container>

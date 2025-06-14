@@ -1,0 +1,66 @@
+<div class="container my-4">
+
+  <h2 class="mb-4">
+    Weekly Schedule: {{ departmentName || departmentId }}
+  </h2>
+
+  <div class="d-flex align-items-center mb-3">
+    <button class="btn btn-outline-secondary me-2" (click)="previousWeek()">← Prev Week</button>
+    <h4 class="flex-grow-1 text-center">{{ currentWeekStartIso }}</h4>
+    <button class="btn btn-outline-secondary ms-2" (click)="nextWeek()">Next Week →</button>
+    <button
+      *ngIf="isManager"
+      class="btn btn-primary ms-4"
+      (click)="generateAI()"
+    >
+      AI Generate
+    </button>
+  </div>
+
+  <!-- Employee view -->
+  <div *ngIf="!isManager">
+    <table class="table table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>Day</th>
+          <th>Start</th>
+          <th>End</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of shifts">
+          <td>{{ s.day }}</td>
+          <td>{{ s.startTime }}</td>
+          <td>{{ s.endTime }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Manager view -->
+  <div *ngIf="isManager">
+    <table class="table table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>Username</th>
+          <th *ngFor="let d of days">{{ d }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of matrix">
+          <td>{{ row.username }}</td>
+          <td
+            *ngFor="let d of days"
+            [ngClass]="{ 'bg-success text-white': row.shifts[d] }"
+          >
+            <ng-container *ngIf="row.shifts[d]">
+              {{ row.shifts[d].startTime }}–{{ row.shifts[d].endTime }}
+            </ng-container>
+            <ng-container *ngIf="!row.shifts[d]">Off</ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

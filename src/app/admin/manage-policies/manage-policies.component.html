@@ -1,0 +1,200 @@
+<div class="container my-4">
+  <h2 class="mb-4">Policies</h2>
+
+  <!-- Error -->
+  <div *ngIf="error" class="alert alert-danger text-center">
+    {{ error }}
+  </div>
+
+  <!-- Create Form -->
+  <div class="card p-4 mb-4">
+    <form (ngSubmit)="create()" class="row g-3 align-items-end">
+
+      <!-- Year -->
+      <div class="col-md-3">
+        <label>Year</label>
+        <input type="number" [(ngModel)]="newYear" name="newYear" class="form-control" />
+      </div>
+
+      <!-- Work Day Start -->
+      <div class="col-md-3">
+        <label>Work Day Start</label>
+        <input type="time" [(ngModel)]="newWorkDayStart" name="workDayStart" class="form-control" />
+      </div>
+
+      <!-- Work Day End -->
+      <div class="col-md-3">
+        <label>Work Day End</label>
+        <input type="time" [(ngModel)]="newWorkDayEnd" name="workDayEnd" class="form-control" />
+      </div>
+
+      <!-- Punch In Tolerance -->
+      <div class="col-md-3">
+        <label>Punch In Tolerance</label>
+        <input type="text" [(ngModel)]="newPunchInTolerance" name="punchInTolerance" placeholder="HH:mm:ss" class="form-control" />
+      </div>
+
+      <!-- Punch Out Tolerance -->
+      <div class="col-md-3">
+        <label>Punch Out Tolerance</label>
+        <input type="text" [(ngModel)]="newPunchOutTolerance" name="punchOutTolerance" placeholder="HH:mm:ss" class="form-control" />
+      </div>
+
+      <!-- Max Single Break -->
+      <div class="col-md-3">
+        <label>Max Single Break</label>
+        <input type="text" [(ngModel)]="newMaxSingleBreak" name="maxSingleBreak" placeholder="HH:mm:ss" class="form-control" />
+      </div>
+
+      <!-- Max Total Break Per Day -->
+      <div class="col-md-3">
+        <label>Max Total Break / Day</label>
+        <input type="text" [(ngModel)]="newMaxTotalBreakPerDay" name="maxTotalBreakPerDay" placeholder="HH:mm:ss" class="form-control" />
+      </div>
+
+      <!-- Overtime Multiplier -->
+      <div class="col-md-3">
+        <label>Overtime Multiplier</label>
+        <input type="number" step="0.1" [(ngModel)]="newOvertimeMultiplier" name="overtimeMultiplier" class="form-control" />
+      </div>
+
+      <!-- Leave Quotas -->
+      <div class="col-12">
+        <label class="form-label">Leave Quotas</label>
+        <div class="row g-2">
+          <div *ngFor="let type of leaveTypes" class="col-md-3">
+            <label class="form-label">{{ type | titlecase }}</label>
+            <input
+              type="number"
+              min="0"
+              [(ngModel)]="newLeaveQuotas[type]"
+              [name]="'leaveQuota_' + type"
+              class="form-control"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="col-md-12 mt-3">
+        <button type="submit" class="btn btn-primary w-100">Create Policy</button>
+      </div>
+    </form>
+  </div>
+
+
+  <!-- Policies Table -->
+  <table *ngIf="!loading" class="table table-striped table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>Year</th>
+        <th>Work day start</th>
+        <th>Work day end</th>
+        <th>Punch in tolerance</th>
+        <th>Punch out tolerance</th>
+        <th>Max single break</th>
+        <th>Max total break/day</th>
+        <th>Overtime multiplier</th>
+        <th>Leave quotas</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let policy of list">
+      <!-- <tr *ngIf="policy"> -->
+        <!-- Year -->
+        <td>{{ policy.year }}</td>
+
+        <!-- Work Day Start -->
+        <td *ngIf="activeEditMode !== 'row' || editId !== policy.year">{{ policy.workDayStart }}</td>
+        <td *ngIf="activeEditMode === 'row' && editId === policy.year">
+          <input type="time" [(ngModel)]="editMap[policy.year].workDayStart" class="form-control form-control-sm" />
+        </td>
+
+        <!-- Work Day End -->
+        <td *ngIf="activeEditMode !== 'row' || editId !== policy.year">{{ policy.workDayEnd }}</td>
+        <td *ngIf="activeEditMode === 'row' && editId === policy.year">
+          <input type="time" [(ngModel)]="editMap[policy.year].workDayEnd" class="form-control form-control-sm" />
+        </td>
+
+        <!-- Punch In Tolerance -->
+        <td *ngIf="activeEditMode !== 'row' || editId !== policy.year">{{ policy.punchInTolerance }}</td>
+        <td *ngIf="activeEditMode === 'row' && editId === policy.year">
+          <input type="text" [(ngModel)]="editMap[policy.year].punchInTolerance" class="form-control form-control-sm" />
+        </td>
+
+        <!-- Punch Out Tolerance -->
+        <td *ngIf="activeEditMode !== 'row' || editId !== policy.year">{{ policy.punchOutTolerance }}</td>
+        <td *ngIf="activeEditMode === 'row' && editId === policy.year">
+          <input type="text" [(ngModel)]="editMap[policy.year].punchOutTolerance" class="form-control form-control-sm" />
+        </td>
+
+        <!-- Max Single Break -->
+        <td *ngIf="activeEditMode !== 'row' || editId !== policy.year">{{ policy.maxSingleBreak }}</td>
+        <td *ngIf="activeEditMode === 'row' && editId === policy.year">
+          <input type="text" [(ngModel)]="editMap[policy.year].maxSingleBreak" class="form-control form-control-sm" />
+        </td>
+
+        <!-- Max Total Break Per Day -->
+        <td *ngIf="activeEditMode !== 'row' || editId !== policy.year">{{ policy.maxTotalBreakPerDay }}</td>
+        <td *ngIf="activeEditMode === 'row' && editId === policy.year">
+          <input type="text" [(ngModel)]="editMap[policy.year].maxTotalBreakPerDay" class="form-control form-control-sm" />
+        </td>
+
+        <!-- Overtime Multiplier -->
+        <td *ngIf="activeEditMode !== 'row' || editId !== policy.year">{{ policy.overtimeMultiplier }}</td>
+        <td *ngIf="activeEditMode === 'row' && editId === policy.year">
+          <input type="text" [(ngModel)]="editMap[policy.year].overtimeMultiplier" class="form-control form-control-sm" />
+        </td>
+
+        <!-- Leave Quotas -->
+        <td>
+          <div *ngFor="let key of leaveQuotaKeys(policy.leaveQuotas)">
+            <div *ngIf="editQuotasId !== policy.year">
+              <span class="fw-bold">{{ key }}:</span> {{ policy.leaveQuotas[key] }} days
+            </div>
+            <div *ngIf="editQuotasId === policy.year" class="d-flex align-items-center mb-1">
+              <span class="fw-bold me-2">{{ key }}:</span>
+              <input
+                type="number"
+                [(ngModel)]="editMap[policy.year].leaveQuotas![key]"
+                class="form-control form-control-sm w-auto"
+              />
+            </div>
+          </div>
+        </td>
+
+        <!-- Actions -->
+        <td>
+          <div class="btn-group btn-group-sm" role="group">
+            <!-- Save / Cancel row edit -->
+            <ng-container *ngIf="editId === policy.year && activeEditMode === 'row'; else notEditingRow">
+              <button (click)="saveEdit(policy)" class="btn btn-success">Save</button>
+              <button (click)="cancelEdit()" class="btn btn-secondary">Cancel</button>
+            </ng-container>
+
+            <ng-template #notEditingRow>
+              <ng-container *ngIf="editQuotasId === policy.year && activeEditMode === 'quotas'; else notEditingQuotas">
+                <button (click)="saveEditQuotas(policy)" class="btn btn-success">Save</button>
+                <button (click)="cancelEditQuotas()" class="btn btn-secondary">Cancel</button>
+              </ng-container>
+
+            <ng-template #notEditingQuotas>
+              <ng-container *ngIf="deleteId === policy.year; else normalBtns">
+                <button (click)="confirmDelete(policy)" class="btn btn-danger">Confirm</button>
+                <button (click)="cancelDelete()" class="btn btn-secondary">Cancel</button>
+              </ng-container>
+
+              <ng-template #normalBtns>
+                <button (click)="startEdit(policy)" class="btn btn-primary">Edit</button>
+                <button (click)="startEditQuotas(policy)" class="btn btn-secondary">Edit quotas</button>
+                <button (click)="startDelete(policy)" class="btn btn-danger">Delete</button>
+              </ng-template>
+            </ng-template>
+            </ng-template>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

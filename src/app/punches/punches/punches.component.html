@@ -1,0 +1,146 @@
+<div class="container my-4">
+
+  <div *ngIf="!loading; else ldr">
+    <div *ngIf="errorMessage" class="alert alert-danger text-center">{{ errorMessage }}</div>
+
+    <!-- Today's Records -->
+    <h3 class="mt-4">Today's Records</h3>
+
+    <ul class="list-group">
+      <li
+        *ngFor="let r of todayRecords"
+        class="list-group-item"
+        [ngClass]="{ 'bg-warning-subtle': r.isNonCompliant }"
+      >
+        {{ r.timeIn }}
+        <span *ngIf="r.timeOut">– {{ r.timeOut }} ({{ r.totalHours }})</span>
+
+        <span *ngIf="r.isNonCompliant" class="badge bg-warning text-dark ms-2">
+          Non-compliant
+        </span>
+
+        <!-- Breaks -->
+        <ul *ngIf="todayBreaks[r.id]?.length" class="mt-2 ps-3">
+          <li
+            *ngFor="let b of todayBreaks[r.id]"
+            class="small"
+            [ngClass]="{ 'text-danger': b.isNonCompliant }"
+          >
+            Break: {{ b.startTime }}
+            <span *ngIf="b.endTime">– {{ b.endTime }} ({{ b.duration }})</span>
+
+            <span *ngIf="b.isNonCompliant" class="badge bg-danger ms-2">
+              Non-compliant
+            </span>
+          </li>
+        </ul>
+      </li>
+
+      <li *ngIf="todayRecords.length === 0" class="list-group-item text-muted">
+        No records for today.
+      </li>
+    </ul>
+  </div>
+
+  <ng-template #ldr>
+    <p class="text-center my-5">Loading…</p>
+  </ng-template>
+
+  <hr class="my-5" />
+
+  <!-- Month Navigation -->
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <button (click)="prevMonth()" class="btn btn-outline-primary">&larr;</button>
+    <strong class="fs-5">{{ currentYear }}–{{ currentMonth }}</strong>
+    <button
+      *ngIf="canGoNext"
+      (click)="nextMonth()"
+      class="btn btn-outline-primary"
+    >&rarr;</button>
+  </div>
+
+  <!-- Calendar -->
+  <div *ngIf="loadingMonth; else calGrid">
+    <p class="text-center my-4">Loading calendar…</p>
+  </div>
+
+  <ng-template #calGrid>
+    <!-- Weekday Headers -->
+    <div class="calendar-grid calendar-header mb-2">
+      <div
+        *ngFor="let wd of weekDays"
+        class="calendar-cell calendar-header-cell bg-dark text-white"
+      >
+        {{ wd }}
+      </div>
+    </div>
+
+    <!-- Calendar Days Grid -->
+    <div class="calendar-grid">
+      <!-- Blank cells -->
+      <div *ngFor="let _ of blanks" class="calendar-cell calendar-blank"></div>
+
+      <!-- Actual days -->
+      <div
+        *ngFor="let d of calendarDays"
+        class="calendar-cell calendar-day"
+        [ngClass]="{
+          'bg-primary text-white': d.dateStr === selectedDate,
+          'bg-success-subtle': d.hasPunches
+        }"
+        (click)="selectDay(d.dateStr)"
+      >
+        {{ d.dateObj.getDate() }}
+      </div>
+    </div>
+  </ng-template>
+
+
+  <!-- Day Details -->
+  <div *ngIf="selectedDate">
+    <h4 class="mt-4 mb-3">Details for {{ selectedDate }}</h4>
+
+    <div *ngIf="loadingDay">
+      <p class="text-center">Loading day…</p>
+    </div>
+
+    <div *ngIf="!loadingDay">
+      <ul class="list-group">
+        <li
+          *ngFor="let r of dayRecords"
+          class="list-group-item"
+          [ngClass]="{ 'bg-warning-subtle': r.isNonCompliant }"
+        >
+          In {{ r.timeIn }}
+          <span *ngIf="r.timeOut">– Out {{ r.timeOut }}</span>
+
+          <span *ngIf="r.isNonCompliant" class="badge bg-warning text-dark ms-2">
+            Non-compliant
+          </span>
+
+          <!-- Breaks -->
+          <ul *ngIf="dayBreaks[r.id]?.length" class="mt-2 ps-3">
+            <li
+              *ngFor="let b of dayBreaks[r.id]"
+              class="small"
+              [ngClass]="{ 'text-danger': b.isNonCompliant }"
+            >
+              Break: {{ b.startTime }}
+              <span *ngIf="b.endTime">– {{ b.endTime }} ({{ b.duration }})</span>
+
+              <span *ngIf="b.isNonCompliant" class="badge bg-danger ms-2">
+                Non-compliant
+              </span>
+            </li>
+          </ul>
+        </li>
+
+        <li *ngIf="dayRecords.length === 0" class="list-group-item text-muted">
+          No records for this day.
+        </li>
+      </ul>
+
+      <p class="mt-3 fw-bold">Total: {{ formatSecondsToTimespan(totalSecondsDay) }} hrs</p>
+    </div>
+  </div>
+</div>

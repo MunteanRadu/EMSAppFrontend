@@ -1,0 +1,85 @@
+<h2 mat-dialog-title>Task Details</h2>
+
+<div mat-dialog-content class="container-fluid">
+  <!-- EDIT MODE -->
+  <div *ngIf="editingAssignment; else viewAssignment" class="p-2">
+    <div class="mb-3">
+      <label class="form-label">Title</label>
+      <input [(ngModel)]="editedTitle" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea [(ngModel)]="editedDescription" class="form-control" rows="4"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Due Date</label>
+      <input type="date" [(ngModel)]="editedDueDate" class="form-control" />
+    </div>
+
+    <div class="d-flex justify-content-end mt-3">
+      <div class="btn-group btn-group-sm" role="group">
+        <button (click)="saveEditTask()" class="btn btn-success">Save</button>
+        <button (click)="cancelEditTask()" class="btn btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM MODE -->
+  <ng-container *ngIf="deletingAssignment">
+    <div class="d-flex justify-content-end mt-3">
+      <div class="btn-group btn-group-sm" role="group">
+        <button (click)="confirmDeleteTask()" class="btn btn-danger">Confirm</button>
+        <button (click)="cancelDeleteTask()" class="btn btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- VIEW MODE -->
+  <ng-template #viewAssignment>
+    <div class="card p-3 mb-3">
+      <div class="mb-2">
+        <strong>Title:</strong>
+        <div class="text-break">{{ data.title }}</div>
+      </div>
+
+      <div class="mb-2">
+        <strong>Description:</strong>
+        <div class="text-break">{{ data.description }}</div>
+      </div>
+
+      <div class="mb-2">
+        <strong>Due:</strong> {{ data.dueDate | date:'shortDate' }}
+      </div>
+
+      <div class="mb-2">
+        <strong>Status:</strong> {{ data.status }}
+      </div>
+
+      <!-- Manager Actions -->
+      <div *ngIf="isManager" class="d-flex justify-content-end mt-3">
+        <div class="btn-group btn-group-sm" role="group">
+          <ng-container *ngIf="!deletingAssignment; else deleteConfirm">
+            <button (click)="startEditTask()" class="btn btn-primary">Edit</button>
+            <button (click)="startDeleteTask()" class="btn btn-danger">Delete</button>
+          </ng-container>
+
+          <ng-template #deleteConfirm>
+            <button (click)="confirmDeleteTask()" class="btn btn-danger">Confirm</button>
+            <button (click)="cancelDeleteTask()" class="btn btn-secondary">Cancel</button>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Feedback component -->
+  <div class="feedback-section mt-4">
+    <app-assignment-feedback [assignmentId]="data.id"></app-assignment-feedback>
+  </div>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+</div>
