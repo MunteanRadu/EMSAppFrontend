@@ -125,7 +125,7 @@ export class ManageEmployeesComponent implements OnInit {
       username: uname,
       email:    email,
       passwordHash: pass,
-      departmentId: this.deptId
+      departmentId: ''
     }).pipe(finalize(() => this.loading = false))
       .subscribe({
         next: () => {

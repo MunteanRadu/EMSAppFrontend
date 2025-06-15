@@ -8,11 +8,10 @@ export class DepartmentGuard implements CanActivate {
 
   canActivate(): boolean {
     const user = this.auth.currentUser;
-    if (user?.departmentId) {
-      return true;
+    if (user?.departmentId === null || user?.departmentId === "") {
+      this.router.navigate(['/pending-assignment']);
+      return false;
     }
-    // not assigned → send to “pending assignment” page
-    this.router.navigate(['/pending-assignment']);
-    return false;
+    return true;
   }
 }
