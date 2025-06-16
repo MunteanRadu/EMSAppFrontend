@@ -1,4 +1,4 @@
 export interface DaySummary {
-  date: string;         // "YYYY-MM-DD"
+  date: string;
   hasPunches: boolean;
 }

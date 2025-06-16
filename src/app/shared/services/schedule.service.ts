@@ -1,4 +1,3 @@
-// src/app/shared/services/schedule.service.ts
 import { Injectable }     from '@angular/core';
 import { HttpClient }     from '@angular/common/http';
 import { Observable }     from 'rxjs';
@@ -22,12 +21,10 @@ export class ScheduleService {
     );
   }
 
-  /** Ask the AI endpoint to generate a weekly schedule, then save it */
   aiGenerateWeeklySchedule(departmentId: string, weekStart: string): Observable<any> {
     return this.http.post(`${this.base}/${departmentId}/ai-generate?weekStart=${weekStart}`, {});
   }
 
-  /** Create a new shift assignment */
   createShift(a: {
     userId: string;
     date: string;
@@ -40,7 +37,6 @@ export class ScheduleService {
     return this.http.post<ShiftAssignment>(`${this.base}`, a);
   }
 
-  /** Update shift times or type */
   updateShift(id: string, payload: {
     shift?: string;
     startTime?: string;
@@ -49,7 +45,6 @@ export class ScheduleService {
     return this.http.put<void>(`${this.base}/${id}`, payload);
   }
 
-  /** Delete a shift assignment */
   deleteShift(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/${id}`);
   }

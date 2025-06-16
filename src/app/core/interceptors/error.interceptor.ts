@@ -1,5 +1,3 @@
-// src/app/core/interceptors/error.interceptor.ts
-
 import { Injectable } from '@angular/core';
 import {
   HttpInterceptor,

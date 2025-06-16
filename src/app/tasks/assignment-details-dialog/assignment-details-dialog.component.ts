@@ -1,5 +1,3 @@
-// src/app/tasks/task-details-dialog.component.ts
-
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Assignment } from '../../shared/models/assignment.model';
@@ -72,8 +70,6 @@ export class TaskDetailsDialogComponent implements OnInit {
       req.dueDate = new Date(this.editedDueDate).toISOString();
     }
 
-    // We are not editing assignedToId or status here → could add if needed
-
     if (Object.keys(req).length > 0) {
       this.taskSvc.update(this.data.id, req).subscribe(() => {
         if (req.title) {
@@ -88,7 +84,6 @@ export class TaskDetailsDialogComponent implements OnInit {
         this.editingAssignment = false;
       });
     } else {
-      // nothing changed
       this.editingAssignment = false;
     }
   }

@@ -64,7 +64,6 @@ export class SchedulesComponent implements OnInit {
       : this.loadUserWeekly();
   }
 
-  /** Employee view */
   loadUserWeekly() {
     this.scheduleSvc
       .getUserSchedule(this.userId, this.currentWeekStartIso)
@@ -110,14 +109,12 @@ export class SchedulesComponent implements OnInit {
     });
   }
 
-  /** AI‐generate & reload */
   generateAI() {
     this.scheduleSvc
       .aiGenerateWeeklySchedule(this.departmentId, this.currentWeekStartIso)
       .subscribe(() => this.loadDepartmentWeekly());
   }
 
-  /** Week navigation */
   previousWeek() {
     this.weekStart.setDate(this.weekStart.getDate() - 7);
     this.currentWeekStartIso = this.toIsoDate(this.weekStart);
@@ -129,7 +126,6 @@ export class SchedulesComponent implements OnInit {
     this.load();
   }
 
-  /** Helpers */
   private getMonday(d: Date): Date {
     const date = new Date(d);
     const day  = date.getDay();

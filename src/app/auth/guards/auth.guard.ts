@@ -1,4 +1,3 @@
-// src/app/auth/auth.guard.ts
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanMatch, Route, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthService }            from '../auth.service';
@@ -31,7 +30,6 @@ export class AuthGuard implements CanActivate {
       });
     }
 
-    // expiration check...
     if (payload.exp && Date.now() >= payload.exp * 1000) {
       this.auth.logout();
       return this.router.createUrlTree(['/login'], {
@@ -39,7 +37,6 @@ export class AuthGuard implements CanActivate {
       });
     }
 
-    // --- improved role check ---
     const rawRole =
       payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
       payload['role'] ||
@@ -56,5 +53,3 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 }
-// This AuthGuard checks if the user is logged in before allowing access to certain routes.
-// If not logged in, it redirects to the login page.

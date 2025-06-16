@@ -1,4 +1,3 @@
-// src/app/auth/auth-routing.module.ts
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
@@ -19,5 +18,3 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AuthRoutingModule {}
-// This module defines the routing for the authentication feature.
-// It includes a route for the login component, which is lazy-loaded in the main app routing module.

@@ -22,7 +22,6 @@ export class ProfileComponent implements OnInit {
   loading = false;
   error   = '';
 
-  // editable buffer
   editedProfile: Partial<UserProfile> = {};
 
   constructor(

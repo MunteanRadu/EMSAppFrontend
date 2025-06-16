@@ -19,10 +19,8 @@ export class FilterTableComponent<T> {
   @Input() data: T[] = [];
   @Input() columns: ColumnDef<T>[] = [];
 
-  // Projected <ng-template #headerCell>…</ng-template>
   @ContentChild('headerCell', { read: TemplateRef }) headerCellTpl?: TemplateRef<any>;
 
-  // Projected <ng-template #rowTpl let-row>…</ng-template>
   @ContentChild('rowTpl', { read: TemplateRef }) rowTpl!: TemplateRef<any>;
 
   filterValues: Partial<Record<keyof T, string>> = {};

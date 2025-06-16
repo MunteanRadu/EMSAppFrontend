@@ -1,4 +1,3 @@
-// src/app/auth/register/register.component.ts
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -46,5 +45,3 @@ export class RegisterComponent implements OnInit {
     });
   }
 }
-// This component handles user registration.
-// It uses a reactive form to capture username, email, and password.

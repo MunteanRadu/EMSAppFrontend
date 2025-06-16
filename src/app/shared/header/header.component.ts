@@ -37,12 +37,10 @@ export class HeaderComponent implements OnInit {
     return this.roles.some(r => r.toLowerCase() === 'employee');
   }
 
-  /** True for both managers and admins */
   get isManager(): boolean {
     return this.roles.some(r => r.toLowerCase() === 'manager');
   }
 
-  /** True only for admins */
   get isAdmin(): boolean {
     return this.roles.some(r => r.toLowerCase() === 'admin');
   }
@@ -52,5 +50,3 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 }
-// This component displays the header with the username and a logout button.
-// It extracts the username from the JWT token and provides a logout method that clears the session and redirects to the login page.

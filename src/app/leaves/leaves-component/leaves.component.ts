@@ -18,31 +18,26 @@ import { User }                       from '../../shared/models/user.model';
   styleUrls: ['./leaves.component.scss']
 })
 export class LeavesComponent implements OnInit {
-  // role & user
   isManager = false;
   userId    = '';
 
-  // form fields
   leaveTypes    = ['annual', 'compassionate', 'parental', 'paid', 'unpaid', 'sick', 'toil', 'academic', 'misc'] as LeaveType[];
   newType       !: LeaveType;
   newStartDate  = '';
   newEndDate    = '';
   newReason     = '';
 
-  // data
   myRequests       : LeaveRequest[] = [];
   pendingRequests  : LeaveRequest[] = [];
   historyRequests  : LeaveRequest[] = [];
 
-  // to map userId → username
   userMap: Record<string,string> = {};
 
-  // errors
   formError   = '';
   actionError = '';
 
-  todayString = '';  // YYYY-MM-DD
-  maxString   = '';  // YYYY-MM-DD one year out
+  todayString = '';
+  maxString   = '';
 
   constructor(
     private auth:     AuthService,

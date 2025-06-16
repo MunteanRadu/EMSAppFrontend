@@ -64,7 +64,6 @@ export class ManageTasksComponent implements OnInit {
         next: x => {
           this.list = x;
           
-          // Dynamically populate status filter options
           const statuses = new Set(x.map(t => t.status));
           const statusOptions = Array.from(statuses).map(s => ({ value: s, label: s }));
           const statusConfig = this.assignmentFilterConfig.find(c => c.name === 'status');

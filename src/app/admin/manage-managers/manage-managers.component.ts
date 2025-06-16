@@ -1,4 +1,3 @@
-// src/app/admin/manage-managers.component.ts
 import { Component, OnInit } from '@angular/core';
 import { finalize }          from 'rxjs/operators';
 import { AuthService }       from '../../auth/auth.service';
@@ -42,12 +41,10 @@ export class ManageManagersComponent implements OnInit {
     this.userSvc.getById(me).subscribe(u => {
     this.deptId = u.departmentId!;
     
-    // Load departments first
     this.departmentSvc.getAll().subscribe(depts => {
       this.departmentMap = {};
       depts.forEach(d => this.departmentMap[d.id] = d.name);
 
-      // Then load managers
       this.loadLists();
     });
   });

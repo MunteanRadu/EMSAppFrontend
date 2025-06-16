@@ -1,4 +1,3 @@
-// src/app/shared/services/punch-record.service.ts
 import { Injectable }    from '@angular/core';
 import { HttpClient }    from '@angular/common/http';
 import { environment }   from '../../../environments/environment';
@@ -15,8 +14,8 @@ export class PunchRecordService {
 
   punchIn(userId: string): Observable<PunchRecord> {
     const now = new Date();
-    const date = now.toISOString().split('T')[0]; // YYYY-MM-DD
-    const time = now.toTimeString().split(' ')[0]; // HH:MM:SS
+    const date = now.toISOString().split('T')[0];
+    const time = now.toTimeString().split(' ')[0];
     const body = {
       userId,
       date,
@@ -30,7 +29,7 @@ export class PunchRecordService {
 
   punchOut(recordId: string): Observable<PunchRecord> {
     const now = new Date();
-    const time = now.toTimeString().slice(0,8) // HH:MM:SS
+    const time = now.toTimeString().slice(0,8)
     const body = {
       timeOut: time
     }
@@ -54,7 +53,6 @@ export class PunchRecordService {
     );
   }
 
-  /** GET full punch records for a single date */
   getByDate(userId: string, date: string)
     : Observable<PunchRecord[]> {
     return this.http.get<PunchRecord[]>(
@@ -80,7 +78,6 @@ export class PunchRecordService {
     );
   }
 
-  /** ADMIN: fetch *all* punch records */
   getAll(): Observable<PunchRecord[]> {
     return this.http.get<PunchRecord[]>(`${this.base}`);
   }
@@ -96,7 +93,6 @@ export class PunchRecordService {
     return this.http.put<void>(`${this.base}/${id}`, payload);
   }
 
-  /** ADMIN: delete a punch record by its id */
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/${id}`);
   }

@@ -68,8 +68,6 @@ export class ManagePoliciesComponent implements OnInit {
   
 
   create() {
-    // 1) parse the numeric fields into actual numbers
-    // 2) call fixTime(...) on every string that the backend will treat as TimeOnly or TimeSpan.
     const payload: PolicyCreateRequest = {
       year: Number(this.newYear),
       workDayStart: this.fixTime(this.newWorkDayStart),
@@ -79,10 +77,9 @@ export class ManagePoliciesComponent implements OnInit {
       maxSingleBreak: this.fixTime(this.newMaxSingleBreak),
       maxTotalBreakPerDay: this.fixTime(this.newMaxTotalBreakPerDay),
       overtimeMultiplier: parseFloat(this.newOvertimeMultiplier),
-      leaveQuotas: this.newLeaveQuotas   // e.g. { annual: 20, compassionate: 5, ... }
+      leaveQuotas: this.newLeaveQuotas
     };
 
-    // If any of the numeric parses resulted in NaN, bail out
     if (isNaN(payload.year) || isNaN(payload.overtimeMultiplier)) {
       this.error = 'Year and overtime multiplier must be valid numbers';
       return;
@@ -90,7 +87,6 @@ export class ManagePoliciesComponent implements OnInit {
 
     this.svc.create(payload).subscribe({
       next: () => {
-        // Reset all form fields
         this.newYear = '';
         this.newWorkDayStart = '';
         this.newWorkDayEnd = '';

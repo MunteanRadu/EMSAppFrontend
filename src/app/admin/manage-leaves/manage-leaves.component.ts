@@ -1,5 +1,3 @@
-// src/app/manage-leaves/manage-leaves.component.ts
-
 import { Component, OnInit }    from '@angular/core';
 import { finalize }             from 'rxjs/operators';
 import { LeaveRequestService }  from '../../shared/services/leave-request.service';

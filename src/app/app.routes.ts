@@ -1,4 +1,3 @@
-// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { AuthGuard } from './auth/guards/auth.guard';
 import { ManageEmployeesComponent } from './employees/manage-employees/manage-employees.component';
@@ -12,7 +11,6 @@ import { AdminGuard } from './auth/guards/admin.guard';
 import { SchedulesComponent } from './schedules/schedule/schedule.component';
 
 export const appRoutes: Routes = [
-  // standalone login component
   {
     path: '',
     redirectTo: 'login',
@@ -22,17 +20,16 @@ export const appRoutes: Routes = [
     path: 'login',
     loadComponent: () =>
       import('./auth/login/login.component').then(m => m.LoginComponent),
-    data: { showHeader: false } // no header on login page
+    data: { showHeader: false }
   },
 
   {
     path: 'register',
     loadComponent: () =>
         import('./auth/register/register.component').then(m => m.RegisterComponent),
-    data: { showHeader: false } // no header on register page
+    data: { showHeader: false }
   },
 
-  // lazy-load the DashboardModule
   {
     path: 'dashboard',
     loadChildren: () =>
@@ -97,7 +94,6 @@ export const appRoutes: Routes = [
     data: { showHeader: false }
   },
 
-  // catch-all → redirect
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: 'dashboard' }
 ];

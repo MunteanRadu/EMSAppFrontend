@@ -1,4 +1,3 @@
-// src/app/tasks/tasks.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -29,29 +28,24 @@ interface Group {
   styleUrls: ['./tasks.component.scss']
 })
 export class TasksComponent implements OnInit {
-  // employee arrays
   deptPending: Assignment[] = [];
   myOngoing: Assignment[] = [];
   myRejected: Assignment[] = [];
   myCompleted: Assignment[] = [];
 
-  // manager arrays
   managerPending: Assignment[] = [];
   managerInProgress: Assignment[] = [];
   managerDone: Assignment[] = [];
   managerApproved: Assignment[] = [];
   managerRejectedForReview: Assignment[] = [];
 
-  // tab groups
   managerGroups: Group[] = [];
-  // (for employee we’ll inline in template)
 
   loading = false;
   private userId!: string;
   isManager = false;
   departmentId!: string;
 
-  // create form
   newTitle = '';
   newDescription = '';
   newDueDate = '';
@@ -68,7 +62,6 @@ export class TasksComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // decode token
     const token = this.auth.token!;
     const payload: any = JSON.parse(atob(token.split('.')[1]));
     this.userId = payload.sub;
@@ -76,7 +69,6 @@ export class TasksComponent implements OnInit {
                     || payload.role;
     this.isManager = ['manager', 'admin'].includes(roleRaw.toLowerCase());
 
-    // date‐input min
     const d = new Date(); d.setHours(0,0,0,0);
     const mm = String(d.getMonth()+1).padStart(2,'0');
     const dd = String(d.getDate()).padStart(2,'0');

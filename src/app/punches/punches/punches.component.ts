@@ -1,4 +1,3 @@
-// src/app/punches/punches/punches.component.ts
 import { Component, OnInit }   from '@angular/core';
 import { CommonModule }         from '@angular/common';
 import { RouterModule }         from '@angular/router';
@@ -61,7 +60,6 @@ export class PunchesComponent implements OnInit {
     this.loadMonth();
   }
 
-  /** Load only today’s punches via getByDate */
   private loadTodayRecords() {
     const now     = new Date();
     const yyyy    = now.getFullYear();
@@ -74,7 +72,6 @@ export class PunchesComponent implements OnInit {
         this.todayRecords = records;
         this.updateNextAction(records);
 
-        // load breaks per record
         this.todayBreaks = {};
         records.forEach(r => {
           this.punches.getBreaks(r.id).subscribe(breaks => {
@@ -84,7 +81,6 @@ export class PunchesComponent implements OnInit {
       });
   }
 
-  /** Decide whether next action is In or Out */
   private updateNextAction(records: PunchRecord[]) {
     const last = records[records.length - 1];
     if (!last || last.timeOut) {
@@ -101,7 +97,7 @@ export class PunchesComponent implements OnInit {
   onPunch() {
     this.loading = true;
     this.errorMessage = '';
-    const op$ = this.nextAction==='In'
+    const op$ = this.nextAction ==='In'
       ? this.punches.punchIn(this.userId)
       : this.punches.punchOut(this.lastRecordId!);
 
@@ -120,7 +116,6 @@ export class PunchesComponent implements OnInit {
     return !breaks.some(bs => !bs.endTime);
   }
 
-  /** True if there's an active punch AND an open break */
   get canEndBreak(): boolean {
     if (this.nextAction !== 'Out' || !this.lastRecordId) return false;
     const breaks = this.todayBreaks[this.lastRecordId] ?? [];
@@ -153,7 +148,6 @@ export class PunchesComponent implements OnInit {
       .subscribe(() => this.loadTodayRecords());
   }
 
-  /** Load summaries for the current month */
   loadMonth() {
     this.loadingMonth = true;
     this.punches
@@ -161,7 +155,6 @@ export class PunchesComponent implements OnInit {
       .pipe(finalize(() => this.loadingMonth = false))
       .subscribe(s => {
         this.monthSummaries = s;
-        // if selectedDate no longer in this month, clear detail
         if (!s.find(ds => ds.date === this.selectedDate)) {
           this.clearDetail();
         }
@@ -186,7 +179,6 @@ export class PunchesComponent implements OnInit {
     this.loadMonth();
   }
 
-  /** true if not already in current month */
   get canGoNext(): boolean {
     const now = new Date();
     return !(
@@ -195,13 +187,11 @@ export class PunchesComponent implements OnInit {
     );
   }
 
-  /** User clicked a day in the calendar */
   selectDay(date: string) {
     this.selectedDate = date;
     this.loadDay(date);
   }
 
-  /** Load full records for one date */
   loadDay(date: string) {
     this.loadingDay = true;
     this.punches.getByDate(this.userId, date)
@@ -233,7 +223,6 @@ export class PunchesComponent implements OnInit {
     this.dayHasBreaks    = false;
   }
 
-  /** Build a 1…N list of days for template, with local dateStr */
   get calendarDays() {
     const daysInMonth = new Date(this.currentYear, this.currentMonth, 0).getDate();
     return Array.from({ length: daysInMonth }, (_, i) => {
@@ -248,7 +237,6 @@ export class PunchesComponent implements OnInit {
     });
   }
 
-  /** Helpers to convert "HH:mm:ss" ↔ seconds */
   private parseTimespanToSeconds(ts: string): number {
     const [h,m,s] = ts.split(':').map(x => parseInt(x, 10));
     return h * 3600 + m * 60 + s;

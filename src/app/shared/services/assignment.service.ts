@@ -1,4 +1,3 @@
-// src/app/shared/services/assignment.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Assignment } from '../models/assignment.model';
@@ -11,7 +10,6 @@ export class AssignmentService {
 
   constructor(private http: HttpClient) {}
 
-  // For employees:
   listByAssignee(userId: string): Observable<Assignment[]> {
     return this.http.get<Assignment[]>(
       `${this.base}/listBySomething?asignee=${userId}`
@@ -30,14 +28,12 @@ export class AssignmentService {
     );
   }
 
-  /** Fetch all assignments with a given status */
   getByStatus(status: Assignment['status']): Observable<Assignment[]> {
     return this.http.get<Assignment[]>(
       `${this.base}/listBySomething?status=${status}`
     );
   }
 
-  // For managers (or admins):
   listAll(): Observable<Assignment[]> {
     return this.http.get<Assignment[]>(this.base);
   }
@@ -82,7 +78,6 @@ export class AssignmentService {
     return this.http.put<void>(`${this.base}/${id}`, payload);
   }
 
-  /** ADMIN: delete an assignment */
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/${id}`);
   }

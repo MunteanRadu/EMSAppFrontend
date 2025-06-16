@@ -13,7 +13,6 @@
         </div>
       </th>
 
-      <!-- any extra header cell (e.g. "Actions") -->
       <ng-container *ngIf="headerCellTpl">
         <th>
           <ng-template [ngTemplateOutlet]="headerCellTpl"></ng-template>
@@ -23,7 +22,6 @@
   </thead>
   <tbody>
     <ng-container *ngFor="let row of filteredData">
-      <!-- user-provided row template gets rendered for each row -->
       <ng-template
         [ngTemplateOutlet]="rowTpl"
         [ngTemplateOutletContext]="{ $implicit: row }"

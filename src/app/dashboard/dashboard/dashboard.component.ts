@@ -1,6 +1,6 @@
 import { Component, OnInit }                    from '@angular/core';
 import { forkJoin, of }                         from 'rxjs';
-import { finalize }                             from 'rxjs/operators';
+import { finalize, switchMap, tap }             from 'rxjs/operators';
 import { CommonModule }                         from '@angular/common';
 import { RouterModule, Router }                 from '@angular/router';
 
@@ -53,7 +53,6 @@ export class DashboardComponent implements OnInit {
     this.isManager = roleRaw.toLowerCase() === 'manager';
     const userId   = payload.sub as string;
 
-    //  load leave status
     this.leaveSvc.listByUser(userId).subscribe(leaves => {
       const todayMs = this.todayMidnight().getTime();
       this.hasActiveLeave = leaves.some(l =>
@@ -63,10 +62,8 @@ export class DashboardComponent implements OnInit {
       );
     });
 
-    // load punch/break state
     this.loadTodayRecords();
 
-    // parallel: schedules & tasks
     this.userSvc.getById(userId).subscribe({
       next: user => {
         this.username = user.username;
@@ -74,8 +71,8 @@ export class DashboardComponent implements OnInit {
 
         const now      = new Date();
         const yyyy     = now.getFullYear();
-        const mm       = String(now.getMonth()+1).padStart(2,'0');
-        const dd       = String(now.getDate()).padStart(2,'0');
+        const mm       = String(now.getMonth() + 1).padStart(2, '0');
+        const dd       = String(now.getDate()).padStart(2, '0');
         const today    = `${yyyy}-${mm}-${dd}`;
 
         const weekStart    = this.getMonday(now);
@@ -88,7 +85,6 @@ export class DashboardComponent implements OnInit {
           tasks: this.assignments.getByStatus('InProgress')
         }).subscribe({
           next: ({ shifts, tasks }) => {
-            // tasks
             const todayIso = today;
             this.ongoingTasks = tasks.map(t => ({
               ...t,
@@ -97,7 +93,6 @@ export class DashboardComponent implements OnInit {
                 new Date(t.dueDate) < new Date(todayIso)
             }));
 
-            // shifts
             this.upcomingShifts = (shifts ?? []).map(s => ({
               ...s,
               day: this.isoToDayName(s.date)
@@ -117,20 +112,39 @@ export class DashboardComponent implements OnInit {
   private loadTodayRecords() {
     const userId = this.authUserId;
     const now    = new Date();
-    const y      = now.getFullYear(), m = String(now.getMonth()+1).padStart(2,'0'), d = String(now.getDate()).padStart(2,'0');
+    const y      = now.getFullYear();
+    const m      = String(now.getMonth() + 1).padStart(2, '0');
+    const d      = String(now.getDate()).padStart(2, '0');
     const today  = `${y}-${m}-${d}`;
 
-    this.punches.getByDate(userId, today)
-      .subscribe(records => {
+    this.punches.getByDate(userId, today).pipe(
+      switchMap(records => {
         this.todaysPunches = records;
-        const totalSec = records.reduce((sum, r) => {
+        this.todayBreaks   = {};
+
+        const breakObs = records.map(r =>
+          this.punches.getBreaks(r.id).pipe(
+            tap(bs => this.todayBreaks[r.id] = bs)
+          )
+        );
+
+        return breakObs.length ? forkJoin(breakObs) : of([]);
+      })
+    ).subscribe({
+      next: () => {
+        const totalSec = this.todaysPunches.reduce((sum, r) => {
           if (!r.totalHours) return sum;
-          const [h,mm,ss] = r.totalHours.split(':').map(x=>parseInt(x,10));
-          return sum + h*3600 + mm*60 + ss;
+          const rawSec = this.parseSeconds(r.totalHours);
+          const breaks = this.todayBreaks[r.id] || [];
+          const breakSec = breaks.reduce((bSum, b) =>
+            b.duration ? bSum + this.parseSeconds(b.duration) : bSum
+          , 0);
+          return sum + (rawSec - breakSec);
         }, 0);
+
         this.totalHoursToday = this.formatTimespan(totalSec);
-        
-        const last = records[records.length-1];
+
+        const last = this.todaysPunches[this.todaysPunches.length - 1];
         if (!last || last.timeOut) {
           this.nextAction   = 'In';
           this.lastRecordId = undefined;
@@ -138,12 +152,9 @@ export class DashboardComponent implements OnInit {
           this.nextAction   = 'Out';
           this.lastRecordId = last.id;
         }
-        this.todayBreaks = {};
-        records.forEach(r =>
-          this.punches.getBreaks(r.id)
-            .subscribe(bs => this.todayBreaks[r.id] = bs)
-        );
-      });
+      },
+      error: err => console.error('Error loading today’s records', err)
+    });
   }
 
   onPunch() {
@@ -166,13 +177,13 @@ export class DashboardComponent implements OnInit {
 
   get canStartBreak(): boolean {
     if (this.nextAction !== 'Out' || !this.lastRecordId) return false;
-    const bs = this.todayBreaks[this.lastRecordId]||[];
+    const bs = this.todayBreaks[this.lastRecordId] || [];
     return !bs.some(x => !x.endTime);
   }
 
   get canEndBreak(): boolean {
     if (this.nextAction !== 'Out' || !this.lastRecordId) return false;
-    const bs = this.todayBreaks[this.lastRecordId]||[];
+    const bs = this.todayBreaks[this.lastRecordId] || [];
     return bs.some(x => !x.endTime);
   }
 
@@ -184,7 +195,7 @@ export class DashboardComponent implements OnInit {
   }
 
   onEndBreak() {
-    const bs = this.todayBreaks[this.lastRecordId!]||[];
+    const bs   = this.todayBreaks[this.lastRecordId!] || [];
     const open = bs.find(x => !x.endTime);
     if (!open) return;
     this.loadingPunch = true;
@@ -201,42 +212,42 @@ export class DashboardComponent implements OnInit {
   private getMonday(d: Date): Date {
     const date = new Date(d);
     const day  = date.getDay();
-    const diff = date.getDate() - day + (day===0? -6:1);
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
     return new Date(date.setDate(diff));
   }
 
   private toIsoDate(d: Date): string {
-    return d.toISOString().slice(0,10);
+    return d.toISOString().slice(0, 10);
   }
 
   private isoToDayName(iso: string): string {
-    const dt = new Date(iso);
+    const dt    = new Date(iso);
     const names = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     return names[dt.getDay()];
   }
 
   private todayMidnight(): Date {
     const d = new Date();
-    d.setHours(0,0,0,0);
+    d.setHours(0, 0, 0, 0);
     return d;
   }
 
   private isoToMidnight(iso: string): number {
     const d = new Date(iso);
-    d.setHours(0,0,0,0);
+    d.setHours(0, 0, 0, 0);
     return d.getTime();
   }
 
   private parseSeconds(ts: string): number {
-    const [h,m,s] = ts.split(':').map(x=>parseInt(x,10));
-    return h*3600 + m*60 + s;
+    const [h, m, s] = ts.split(':').map(x => parseInt(x, 10));
+    return h * 3600 + m * 60 + s;
   }
 
   private formatTimespan(sec: number): string {
-    const h = Math.floor(sec/3600),
-          m = Math.floor((sec%3600)/60),
-          s = sec%60;
-    return [h,m,s].map(n=>String(n).padStart(2,'0')).join(':');
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    return [h, m, s].map(n => String(n).padStart(2, '0')).join(':');
   }
 
   logout() {

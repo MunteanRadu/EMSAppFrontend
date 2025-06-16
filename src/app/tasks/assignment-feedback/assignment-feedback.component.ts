@@ -1,5 +1,3 @@
-// src/app/shared/components/assignment-feedback.component.ts
-
 import { Component, Input, OnInit } from '@angular/core';
 import { AssignmentFeedbackService } from '../../shared/services/assignment-feedback.service'; 
 import { AssignmentFeedback } from '../../shared/models/assignment-feedback.model';

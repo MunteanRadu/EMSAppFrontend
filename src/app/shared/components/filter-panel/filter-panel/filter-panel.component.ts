@@ -17,7 +17,6 @@ export class FilterPanelComponent implements OnInit {
   filterValues: Record<string, any> = {};
 
   ngOnInit() {
-    // Initialize the filter values based on the configuration
     this.config.forEach(field => {
       this.filterValues[field.name] = '';
     });
@@ -28,11 +27,9 @@ export class FilterPanelComponent implements OnInit {
   }
 
   clearFilters() {
-    // Reset all filter values
     Object.keys(this.filterValues).forEach(key => {
       this.filterValues[key] = '';
     });
-    // Emit the cleared values to update the parent list
     this.filterChange.emit(this.filterValues);
   }
 }

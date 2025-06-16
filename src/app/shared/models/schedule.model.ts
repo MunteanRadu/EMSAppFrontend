@@ -27,17 +27,3 @@ export interface UpdateScheduleRequest {
 export interface ScheduleExceptionRequest {
   exceptionDate: string;
 }
-
-interface UserDaySchedule {
-  date: string;
-  dayOfWeek: string;
-  startTime: string|null;
-  endTime: string|null;
-  isWorking: boolean;
-}
-
-interface DeptDaySchedule {
-  date: string;
-  dayOfWeek: string;
-  workingUsernames: string[];
-}

@@ -1,9 +1,7 @@
-// src/app/admin/admin.module.ts
 import { NgModule }         from '@angular/core';
 import { CommonModule }     from '@angular/common';
 import { RouterModule }     from '@angular/router';
 import { FormsModule }      from '@angular/forms';
-import { AuthGuard } from '../../auth/guards/auth.guard'; 
 
 import { AdminLayoutComponent }       from '../admin-layout/admin-layout.component';
 import { ManageEmployeesComponent } from '../manage-employees/manage-employees.component'; 
