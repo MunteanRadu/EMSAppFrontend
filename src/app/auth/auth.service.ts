@@ -27,7 +27,6 @@ export class AuthService {
         tap(res => {
           localStorage.setItem(this.tokenKey, res.accessToken);
 
-          // decode payload
           const payload = JSON.parse(atob(res.accessToken.split('.')[1]));
           const user: CurrentUser = {
             username: payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/name'] || payload['unique_name'],

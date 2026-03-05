@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://emsapp-euffdyd3dwhgdzav.polandcentral-01.azurewebsites.net/api'
+  apiUrl: 'emsappbackend-esfde0gbdkeqffew.austriaeast-01.azurewebsites.net/api'
 };
